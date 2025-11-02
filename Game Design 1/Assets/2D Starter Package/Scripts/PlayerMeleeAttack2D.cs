@@ -31,9 +31,12 @@ namespace DigitalWorlds.StarterPackage2D
         [Space(20)]
         [SerializeField] private UnityEvent onMeleeStart, onMeleeEnd;
 
+        public string IsAttacking = "IsAttacking";
+
         private bool canMelee = true;
         private float cooldownTimer = 0;
         private Coroutine meleeCoroutine;
+        private bool attacking = false;
 
         // Call from a UnityEvent to enable or disable the attack
         public void EnableMeleeAttack(bool enableAttack)

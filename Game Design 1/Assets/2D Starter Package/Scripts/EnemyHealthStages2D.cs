@@ -24,25 +24,22 @@ namespace DigitalWorlds.StarterPackage2D
 
         private void OnEnable()
         {
-            enemyHealth.OnEnemyHealthChanged += EnemyHealthChanged;
+            enemyHealth.OnEnemyLostHealth += EnemyLostHealth;
         }
 
         private void OnDisable()
         {
-            enemyHealth.OnEnemyHealthChanged -= EnemyHealthChanged;
+            enemyHealth.OnEnemyLostHealth -= EnemyLostHealth;
         }
 
-        private void EnemyHealthChanged(int oldHealth, int newHealth)
+        private void EnemyLostHealth(int newHealth)
         {
             foreach (HealthStage stage in healthStages)
             {
-                if (!stage.singleUse || !stage.stageUsed)
+                if (stage.healthThreshold == newHealth && (!stage.singleUse || !stage.stageUsed))
                 {
-                    if (oldHealth > stage.healthThreshold && newHealth <= stage.healthThreshold)
-                    {
-                        stage.stageUsed = true;
-                        stage.onStageReached.Invoke();
-                    }
+                    stage.stageUsed = true;
+                    stage.onStageReached.Invoke();
                 }
             }
         }

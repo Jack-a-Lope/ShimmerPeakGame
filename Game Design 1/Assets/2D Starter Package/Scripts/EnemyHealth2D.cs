@@ -44,7 +44,7 @@ namespace DigitalWorlds.StarterPackage2D
         [Space(20)]
         [SerializeField] private UnityEvent onEnemyDamaged, onEnemyDeath;
 
-        public event System.Action<int, int> OnEnemyHealthChanged;
+        public event System.Action<int> OnEnemyLostHealth;
 
         private int maxHealth;
         private bool isDying = false;
@@ -63,20 +63,12 @@ namespace DigitalWorlds.StarterPackage2D
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out Damager damager) && damager.enabled)
+            if (collision.gameObject.TryGetComponent(out Damager damager))
             {
                 Alignment alignment = damager.alignment;
                 if (alignment == Alignment.Player || alignment == Alignment.Environment)
                 {
-                    if (damager.healInstead)
-                    {
-                        Heal(damager.damage);
-                    }
-                    else
-                    {
-                        Hit(damager.damage);
-                    }
-
+                    Hit(damager.damage);
                     return;
                 }
             }
@@ -89,20 +81,12 @@ namespace DigitalWorlds.StarterPackage2D
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out Damager damager) && damager.enabled)
+            if (collision.gameObject.TryGetComponent(out Damager damager))
             {
                 Alignment alignment = damager.alignment;
                 if (alignment == Alignment.Player || alignment == Alignment.Environment)
                 {
-                    if (damager.healInstead)
-                    {
-                        Heal(damager.damage);
-                    }
-                    else
-                    {
-                        Hit(damager.damage);
-                    }
-
+                    Hit(damager.damage);
                     return;
                 }
             }
@@ -115,19 +99,14 @@ namespace DigitalWorlds.StarterPackage2D
 
         public void Hit(int damage = 1)
         {
-            if (isDying || damage == 0)
+            if (isDying)
             {
                 // Ignore the hit and return out of this method if the enemy is already dying
                 return;
             }
 
-            int oldHealth = health;
-
             // Reduce health, but prevent going below 0
             health = Mathf.Max(0, health - damage);
-
-            // Invoke health changed C# event
-            OnEnemyHealthChanged?.Invoke(oldHealth, health);
 
             if (healthBar != null)
             {
@@ -159,7 +138,7 @@ namespace DigitalWorlds.StarterPackage2D
                     Invoke(nameof(Die), delayBeforeDying); // This will call the Die method after delayBeforeDying seconds
                 }
             }
-            else if (damage > 0)
+            else
             {
                 // Play hit sound if it has been assigned
                 if (hitSound != null)
@@ -175,6 +154,9 @@ namespace DigitalWorlds.StarterPackage2D
 
                 // Invoke damaged UnityEvent
                 onEnemyDamaged.Invoke();
+
+                // Invoke lost health C# event
+                OnEnemyLostHealth?.Invoke(health);
             }
         }
 
@@ -203,14 +185,6 @@ namespace DigitalWorlds.StarterPackage2D
 
             // Finally, destroy this entire GameObject
             Destroy(gameObject);
-        }
-
-        public void Heal(int amount)
-        {
-            if (amount > 0)
-            {
-                Hit(-amount);
-            }
         }
 
         [System.Serializable]

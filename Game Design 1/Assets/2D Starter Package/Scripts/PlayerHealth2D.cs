@@ -183,30 +183,14 @@ namespace DigitalWorlds.StarterPackage2D
             onPlayerRespawn.Invoke();
         }
 
-        public void Heal(int amount)
-        {
-            if (amount > 0)
-            {
-                SetHealth(currentHealth + amount);
-            }
-        }
-
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out Damager damager) && damager.enabled)
+            if (collision.gameObject.TryGetComponent(out Damager damager))
             {
                 Alignment alignment = damager.alignment;
                 if (alignment == Alignment.Enemy || alignment == Alignment.Environment)
                 {
-                    if (damager.healInstead)
-                    {
-                        SetHealth(currentHealth + damager.damage);
-                    }
-                    else
-                    {
-                        SetHealth(currentHealth - damager.damage);
-                    }
-
+                    SetHealth(currentHealth - damager.damage);
                     return;
                 }
             }
@@ -227,20 +211,12 @@ namespace DigitalWorlds.StarterPackage2D
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out Damager damager) && damager.enabled)
+            if (collision.gameObject.TryGetComponent(out Damager damager))
             {
                 Alignment alignment = damager.alignment;
                 if (alignment == Alignment.Enemy || alignment == Alignment.Environment)
                 {
-                    if (damager.healInstead)
-                    {
-                        SetHealth(currentHealth + damager.damage);
-                    }
-                    else
-                    {
-                        SetHealth(currentHealth - damager.damage);
-                    }
-
+                    SetHealth(currentHealth - damager.damage);
                     return;
                 }
             }

@@ -15,10 +15,11 @@ TagManager:
   - Player
   - Water
   - UI
-  - 
-  - 
+  - Enemy
+  - Damager
   - Pack
   - Wall
+  - Real Water
   - Ground
   - 
   - 
@@ -39,11 +40,13 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Canvas
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Characters
+    uniqueID: 3428217681
     locked: 0
   m_RenderingLayers:
   - Default

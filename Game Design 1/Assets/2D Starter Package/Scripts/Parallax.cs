@@ -35,7 +35,7 @@ namespace DigitalWorlds.StarterPackage2D
         }
 
         private Vector3 startPos;
-        private float spriteWidth, spriteHeight;
+        private float spriteHeight, spriteWidth;
 
         private void Start()
         {
@@ -49,8 +49,8 @@ namespace DigitalWorlds.StarterPackage2D
             }
 
             // Get the sprite's height and width
-            spriteWidth = spriteRenderer.bounds.size.x;
-            spriteHeight = spriteRenderer.bounds.size.y;
+            spriteHeight = spriteRenderer.bounds.size.x;
+            spriteWidth = spriteRenderer.bounds.size.y;
         }
 
         private void LateUpdate()

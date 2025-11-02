@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speakerList:
   - name: Player
-    sprite: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 1}
+    sprite: {fileID: 591526066, guid: 69bd6dfa0a06530449dfb0f10ad00f22, type: 3}
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
     textColor: {r: 1, g: 1, b: 1, a: 1}
   - name: NPC
-    sprite: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 1}
+    sprite: {fileID: 1247968023, guid: cafad44b67850724f994a2de319bb6fb, type: 3}
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
     textColor: {r: 1, g: 1, b: 1, a: 1}

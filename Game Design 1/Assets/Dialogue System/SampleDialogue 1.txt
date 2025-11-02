@@ -1,0 +1,7 @@
+[NAME=Player] ...
+[NAME=NPC][SPEAKERSPRITE=NPC] Hello little one.
+[NAME=NPC][SPEAKERSPRITE=NPC] It is nice to see another traveler along this path.
+[NAME=Player][SPEAKERSPRITE=Player] Likewise, mage.
+[NAME=Player][SPEAKERSPRITE=Player] I wish you luck in your travels.
+[NAME=NPC][SPEAKERSPRITE=NPC] Nullsah adull. I wish you fairwell.
+[NAME=Player][SPEAKERSPRITE=Player] And to you as well.

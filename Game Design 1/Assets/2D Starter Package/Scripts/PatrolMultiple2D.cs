@@ -158,22 +158,13 @@ namespace DigitalWorlds.StarterPackage2D
                 return;
             }
 
-            if (Camera.current == null)
-            {
-                return;
-            }
-
-            // Fixed gizmo size at any scale
-            Vector3 screenPosition = Camera.current.WorldToScreenPoint(transform.position) + Vector3.right * 10f;
-            Vector3 worldPosition = Camera.current.ScreenToWorldPoint(screenPosition);
-            float worldSize = (worldPosition - transform.position).magnitude;
+            Gizmos.color = Color.yellow;
 
             // Draw a line connecting each waypoint
             for (int i = 0; i < waypoints.Count - 1; i++)
             {
                 if (waypoints[i] != null && waypoints[i + 1] != null)
                 {
-                    Gizmos.color = i == 0 && waypoints.Count > 2 ? Color.green : Color.yellow;
                     Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
                 }
             }
@@ -185,26 +176,38 @@ namespace DigitalWorlds.StarterPackage2D
             }
 
             // Draw a green circle at the beginning of the path
+            Gizmos.color = Color.green;
+
             if (waypoints[0] != null)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(waypoints[0].position, worldSize);
+                Gizmos.DrawSphere(waypoints[0].position, 0.25f);
             }
 
             // If the patrol neither loops nor ping pongs, draw a square at the last waypoint
             if (patrolType == PatrolType.Neither && waypoints[waypoints.Count - 1] != null)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawCube(waypoints[waypoints.Count - 1].position, 2 * worldSize * Vector3.one);
+                Gizmos.DrawCube(waypoints[waypoints.Count - 1].position, Vector3.one * 0.5f);
             }
         }
 
         // Enforce minimum values in the inspector
         protected virtual void OnValidate()
         {
-            patrolSpeed = Mathf.Max(0, patrolSpeed);
-            pauseAtWaypoint = Mathf.Max(0, pauseAtWaypoint);
-            distanceThreshold = Mathf.Max(0, distanceThreshold);
+            if (patrolSpeed < 0)
+            {
+                patrolSpeed = 0;
+            }
+
+            if (pauseAtWaypoint < 0)
+            {
+                pauseAtWaypoint = 0;
+            }
+
+            if (distanceThreshold < 0)
+            {
+                distanceThreshold = 0f;
+            }
         }
     }
 }

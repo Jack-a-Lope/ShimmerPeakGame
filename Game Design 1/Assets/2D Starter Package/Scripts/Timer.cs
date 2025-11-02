@@ -19,9 +19,6 @@ namespace DigitalWorlds.StarterPackage2D
         [Tooltip("Optional: Assign a text component to display the timer on the UI.")]
         [SerializeField] private TMP_Text timerText;
 
-        [Tooltip("Optional: Prefix written before the timer text.")]
-        [SerializeField] private string timerTextPrefix = "Timer: ";
-
         [Tooltip("How many numbers after the decimal place on the timer text.")]
         [SerializeField] private int decimalPlaces = 2;
 
@@ -30,72 +27,46 @@ namespace DigitalWorlds.StarterPackage2D
 
         private float timer = 0f;
         private bool timerInProgress;
-        private bool isPaused;
 
         // Call from a UnityEvent to begin the timer
-        [ContextMenu("Start Timer")]
         public void StartTimer()
         {
             timer = timerSeconds;
             timerInProgress = true;
-            isPaused = false;
             UpdateTimerDisplay();
         }
 
         // Call from a UnityEvent to stop the timer early
-        [ContextMenu("Stop Timer")]
         public void StopTimer()
         {
             timerInProgress = false;
-            isPaused = false;
             timer = 0f;
-            UpdateTimerDisplay();
-        }
-
-        // Call from a UnityEvent to pause the timer without resetting it
-        [ContextMenu("Pause Timer")]
-        public void PauseTimer()
-        {
-            if (timerInProgress && !isPaused)
-            {
-                isPaused = true;
-            }
-        }
-
-        // Call from a UnityEvent to resume the paused timer
-        [ContextMenu("Resume Timer")]
-        public void ResumeTimer()
-        {
-            if (timerInProgress && isPaused)
-            {
-                isPaused = false;
-            }
         }
 
         private void Update()
         {
-            if (timerInProgress && !isPaused)
+            if (timerInProgress)
             {
-                timer -= Time.deltaTime;
-
-                if (timer <= 0f)
+                if (timer >= 0)
                 {
-                    timer = 0f;
-                    UpdateTimerDisplay();
+                    timer -= Time.deltaTime;
+                    timer = Mathf.Max(0f, timer);
+                }
+                else
+                {
                     onTimerFinished.Invoke();
                     StopTimer();
-                    return;
                 }
 
                 UpdateTimerDisplay();
             }
         }
 
-        public void UpdateTimerDisplay()
+        private void UpdateTimerDisplay()
         {
             if (timerText != null)
             {
-                timerText.text = timerTextPrefix + FormatTime(timer, decimalPlaces);
+                timerText.text = FormatTime(timer, decimalPlaces);
             }
         }
 
@@ -116,8 +87,7 @@ namespace DigitalWorlds.StarterPackage2D
             {
                 return decimalPlaces == 0
                     ? $"{minutes:00}:{Mathf.FloorToInt(seconds):00}"
-                    : $"{minutes:00}:{Mathf.FloorToInt(seconds):00}." +
-                      $"{(seconds % 1).ToString($"F{decimalPlaces}")}".Replace("0.", "");
+                    : $"{minutes:00}:{Mathf.FloorToInt(seconds):00}.{(seconds % 1).ToString($"F{decimalPlaces}")}".Replace("0.", "");
             }
         }
 

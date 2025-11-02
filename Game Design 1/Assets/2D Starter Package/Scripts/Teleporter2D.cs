@@ -1,117 +1,74 @@
+// Unity Starter Package - Version 1
+// University of Florida's Digital Worlds Institute
+// Written by Logan Kemper
+
 using UnityEngine;
 using UnityEngine.Events;
-using TMPro;
 
-using DigitalWorlds.StarterPackage2D;
-
-public class Teleporter2D : MonoBehaviour
+namespace DigitalWorlds.StarterPackage2D
 {
-    [Header("Teleport Settings")]
-    public Transform destination;
-    public UnityEvent onTeleported;
-
-    [Header("Activation Settings")]
-    public string requiredTag = "Player";
-    public bool requireKeyPress = false;
-    public KeyCode activationKey = KeyCode.E;
-
-    [Header("Collectable Requirement")]
-    public bool useCollectableRequirement = true;
-    public string requiredItemName = "Star";
-    public int requiredItemCount = 5;
-    [TextArea] public string failMessage = "";
-
-    [Header("UI Message Output")]
-    public TextMeshProUGUI messageText;
-    public float messageDuration = 2f;
-
-    private bool playerInRange = false;
-    private Transform player;
-    private Coroutine messageRoutine;
-
-    private void Update()
+    /// <summary>
+    /// Teleports the player to another location.
+    /// </summary>
+    public class Teleporter2D : MonoBehaviour
     {
-        if (requireKeyPress && playerInRange && player != null)
+        [Tooltip("Enter the player's tag name. Could be used for other tags as well.")]
+        [SerializeField] private string tagName = "Player";
+
+        [Tooltip("Drag in the transform that the player will be teleported to.")]
+        [SerializeField] private Transform destination;
+
+        [Tooltip("If true, the teleport key must be pressed once the player has entered the trigger. If false, they will be teleported as soon as they enter the trigger.")]
+        [SerializeField] private bool requireKeyPress = true;
+
+        [Tooltip("The key input that the script is listening for.")]
+        [SerializeField] private KeyCode teleportKey = KeyCode.Space;
+
+        [Space(20)]
+        [SerializeField] private UnityEvent onTeleported;
+
+        private Transform player;
+
+        private void Update()
         {
-            if (Input.GetKeyDown(activationKey))
+            if (Input.GetKeyDown(teleportKey) && requireKeyPress && player != null)
             {
-                TryTeleport(player);
+                TeleportPlayer();
             }
         }
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag(requiredTag))
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            playerInRange = true;
-            player = collision.transform;
-
-            if (!requireKeyPress)
+            if (!string.IsNullOrEmpty(tagName) && collision.CompareTag(tagName))
             {
-                TryTeleport(player);
+                player = collision.transform;
+
+                if (!requireKeyPress)
+                {
+                    TeleportPlayer();
+                }
             }
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag(requiredTag))
+        private void OnTriggerExit2D(Collider2D collision)
         {
-            playerInRange = false;
-            player = null;
-        }
-    }
-
-    private void TryTeleport(Transform player)
-    {
-        if (destination == null)
-        {
-            Debug.LogWarning("Teleporter destination is not assigned");
-            return;
-        }
-
-        if (!CanTeleport())
-            return;
-
-        player.position = destination.position;
-        onTeleported.Invoke();
-    }
-
-    private bool CanTeleport()
-    {
-        if (!useCollectableRequirement) return true;
-
-        if (requiredItemCount > 0 && CollectableManager.Instance != null)
-        {
-            var c = CollectableManager.Instance.FindCollectable(requiredItemName);
-            if (c == null || c.count < requiredItemCount)
+            if (!string.IsNullOrEmpty(tagName) && collision.CompareTag(tagName))
             {
-                string msg = !string.IsNullOrEmpty(failMessage)
-                    ? failMessage
-                    : $"{requiredItemName} x{requiredItemCount} required to use this teleporter.";
-                ShowMessage(msg);
-                return false;
+                player = null;
             }
         }
-        return true;
-    }
 
-    private void ShowMessage(string msg)
-    {
-        Debug.Log(msg);
-        if (messageText == null) return;
+        // Teleport the player to the specified destination
+        public void TeleportPlayer()
+        {
+            if (destination == null)
+            {
+                Debug.LogWarning("Teleporter destination is not assigned");
+                return;
+            }
 
-        if (messageRoutine != null)
-            StopCoroutine(messageRoutine);
-
-        messageRoutine = StartCoroutine(MessageRoutine(msg));
-    }
-
-    private System.Collections.IEnumerator MessageRoutine(string msg)
-    {
-        messageText.text = msg;
-        yield return new WaitForSeconds(messageDuration);
-        messageText.text = "";
+            player.position = destination.position;
+            onTeleported.Invoke();
+        }
     }
 }

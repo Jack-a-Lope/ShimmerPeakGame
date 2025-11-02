@@ -53,7 +53,9 @@ public class BackPackManager : MonoBehaviour
         // It calculates the line renderer display and whether or not to show it based off of magnitude and direction
         if (isDragging)
         {
-            draggingPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Vector3 mousePos3D = new Vector3(mousePos.x, mousePos.y, 10f);
+            draggingPos = Camera.main.ScreenToWorldPoint(mousePos3D);
             draggingPos.z = 0;
 
             Vector3 relativePos = draggingPos - transform.position;
@@ -62,10 +64,7 @@ public class BackPackManager : MonoBehaviour
             {
                 relativePos = relativePos.normalized * 2;
             }
-            if (relativePos.y > 0)
-            {
-                relativePos.y = 0;
-            }
+
             if (relativePos.magnitude < minDistance)
             {
                 lr.positionCount = 1;
@@ -75,6 +74,7 @@ public class BackPackManager : MonoBehaviour
             isValid = true;
             lr.positionCount = 2;
             lr.SetPosition(1, transform.position - relativePos);
+            lr.SetPosition(0, transform.position);
         }
     }
 
@@ -99,8 +99,8 @@ public class BackPackManager : MonoBehaviour
     // they can't take ordinary actions like moving
     private void startDrag(InputAction.CallbackContext context)
     {
-        if (GetComponent<PlayerMovementAdvanced>() != null && GetComponent<PlayerMovementAdvanced>().isGrounded== true 
-            && curBackpack == null && !GetComponent<PlayerMovement>().GetIsMoving())
+        if (GetComponent<PlayerMovementAdvanced>() != null
+            && curBackpack == null)
         {
             isDragging = true;
             GetComponent<PlayerMovementAdvanced>().EnableMovement(false);
@@ -120,7 +120,9 @@ public class BackPackManager : MonoBehaviour
     {
         isDragging = false;
         lr.positionCount = 0;
-        Vector3 dragReleasePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        Vector3 mousePos3D = new Vector3(mousePos.x, mousePos.y, 10f);
+        Vector3 dragReleasePos = Camera.main.ScreenToWorldPoint(mousePos3D);
         dragReleasePos.z = 0;
         if (isValid)
         {
